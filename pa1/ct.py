@@ -31,7 +31,7 @@ def strxor(a, b):     # xor two strings of different lengths
 
 def encrypt(key, msg):
     c = strxor(key, msg)
-    print
-    print c.encode('hex')
+    print()
+    print(c.encode('hex'))
     return c
 
