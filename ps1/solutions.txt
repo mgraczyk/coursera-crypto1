@@ -29,22 +29,76 @@ If A outputs LSB(x), then
 --------------------------------------------------------------------------------
 4.
 
+The bank has generated the following keys:
+    k, k1, and k2 are random
+    k1' = k xor k1
+    k2' = k xor k2
+
+All choices involve p1 = (k1, k2) and p3 = (k2'), so we consider p2.
+
+p2 cannot be (k1,k2) because p2 U p1 would give p2 no additional information.
+
+p2 cannot be (k1',k2') because then p2 U p3 would give p2 no more info. 
+
+p2 must be (k1',k2). p1 U p2 can derive k and p2 U p3 can derive k.
+
+p2 cannot be (k1') becaue p2 U p3 would be insufficient to derive k.
+
+p2 cannot be (k2,k2') because k2' xor k2 = k so p2 could derive k.
+
 --------------------------------------------------------------------------------
 5.
+
+We aim to show that for all c in C, m1 in M, m2 in M:
+
+P[E(k,m1) = c] = P[E(k,m2) = c]
+
+so we simply compute, for any m in M
+P[E(k,m) = c] = P[m + k mod 256 == c] = P[c - m mod 256 == k] = 1/256
+
+So the cipher has perfect secrecy.
 
 --------------------------------------------------------------------------------
 6.
 
+E'(k,m) = E(k,m) || E(k,m) appears to be ss.
+
+E'((k,k'), m) = E(k,m) || E(k',m) appears to be ss.
+
+E'(k,m) = E(k,m) || LSB(m) is not ss because the adversary can send two
+messages with different LSBs to determine which ciphertext is which.
+
+E'(k,m) = E(0^n,m) is not ss since the adversary can send any two distinct
+messages and determine which is which.
+
+E'(k,m) = 0 || E(k,m) appears to be ss.
+
+E'(k,m) = E(k,m) || k is obviously not ss because the
+attacker can send m0=0s, m1=1s and just look for the message that is k||k.
+
 --------------------------------------------------------------------------------
 7.
+
+From python code,
+k = 0d07a14569fface7ec3ba6f5f623
+"attack at dusk" -> 6c73d5240a948c86981bc2808548
 
 --------------------------------------------------------------------------------
 8.
 
+We need to encrypt the key with 1, 6, 11, and 26 so that (25) does not have
+a way to decrypt the key, but everybody else does.
+
 --------------------------------------------------------------------------------
 9.
 
+We need log(n) keys because we have to encrypt the sibling, parent's
+sibling, parent's parent's sibling, and so on up the log(n) levels. 
+
 --------------------------------------------------------------------------------
 10.
+
+We must encrypt k under the leaf siblings' keys 15, 17, and 26 as well as the
+nodes 11, 6, and 4.
 
 --------------------------------------------------------------------------------
