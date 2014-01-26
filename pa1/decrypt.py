@@ -29,7 +29,8 @@ def guessed_key(guesses):
 
 
 def xor_is_space(ch):
-    return ch[1] >= 65
+    c = ch[1]
+    return (65 <= c and c <= 90) or (97 <= c and c <= 122)
 
 get_0th_for_each = partial(map, operator.itemgetter(0))
 filter_spaces = partial(filter, xor_is_space)
