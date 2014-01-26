@@ -27,19 +27,6 @@ cts = tuple(map(ord, c.decode('hex')) for c in ctshex);
 
 target = "32510ba9babebbbefd001547a810e67149caee11d945cd7fc81a05e9f85aac650e9052ba6a8cd8257bf14d13e6f0a803b54fde9e77472dbff89d71b57bddef121336cb85ccb8f3315f4b52e301d16e9f52f904"
 
-
-guesses = {
-    0: {
-        42:'o'
-        },
-    10: {
-        13:'s',14:'s',15:'a',17:'e',
-        44:'i',46:'h'
-        }
-
-
-}
-
 def strxor(a, b):     # xor two strings of different lengths
     if len(a) > len(b):
         return "".join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a[:len(b)], b)])
