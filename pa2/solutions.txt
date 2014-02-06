@@ -1,0 +1,77 @@
+--------------------------------------------------------------------------------
+1.
+
+The events have the following probabilities:
+    1. 2^-128 ~= 10^-38.5
+    2. 10^-6
+    3. 10^-30
+    4. 10^-36
+    5. 10^-42
+
+So the probability order from most to least likely is
+2,3,4,1,5
+
+--------------------------------------------------------------------------------
+2.
+
+At $200 each With 4 trillion = $4*10^12, the orgainization could
+purchase 2*10^10 such machines.  With each machine testing 10^9 keys per second,
+the orgainization could test 2*10^19 ~= 2^64.11 keys/second.
+
+There 2^128 different AES keys. To test all possible keys, it would take
+roughly 2^64 seconds, which is roughly 5.8*10^11 years.
+That's more than 10^9 years.
+
+--------------------------------------------------------------------------------
+3.
+
+a.
+    { F(k,x) when x != 0^n
+    { 0^n    otherwise
+
+This function is _not secure_ because the adversary would submit 0^n and guess
+that that the function is not random if the output is zero. 
+So Adv[A,F] = |0 - 1| = 1
+
+b.
+    { F(k,x) when x != 0^n
+    { k      otherwise
+
+Not sure about this one
+
+c.
+    { F(k1, x) when x != 0^n
+    { k2       otherwise
+
+Despite the fact that a key is being sent, this function _is secure_ because
+when the adversary submits nonzero messages, he learns only as much about F'
+as he would learn about F, but F is secure.  When he submits 0^n, he gets a
+value that is chosen uniformly from K, so it is indistinguishable from random.
+
+d. F(k, x ^ 1^n)
+
+This function _is secure_ it is equivalent inverting the input of F, which
+cannot reveal any information to the adversary since F is secure.
+
+e. F(k1, x) || F(k2, x)
+
+
+
+--------------------------------------------------------------------------------
+4.
+
+--------------------------------------------------------------------------------
+5.
+
+--------------------------------------------------------------------------------
+6.
+
+--------------------------------------------------------------------------------
+7.
+
+--------------------------------------------------------------------------------
+8.
+
+--------------------------------------------------------------------------------
+9.
+
