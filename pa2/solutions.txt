@@ -37,7 +37,7 @@ b.
     { F(k,x) when x != 0^n
     { k      otherwise
 
-Not sure about this one
+Not sure about this one.  I do not think it's secure
 
 c.
     { F(k1, x) when x != 0^n
@@ -55,23 +55,97 @@ cannot reveal any information to the adversary since F is secure.
 
 e. F(k1, x) || F(k2, x)
 
+This function _is secure_. If there were an adversary A who had an advantage for
+this function, we could create an adversary B with an advantage for F as
+follows.
 
+When A sends a message m_i, B sends m_i.  B takes the response R and
+sends R || R to A. A has a non-negligible probability of determining whether R
+is random or F(k, m_i).
+
+
+f. k ^ x
+
+This function is _not secure_ because the adversary can send m1=0, then send
+m2 = f(m1) xor X.  If b=0, he will always get back X and will therefore guess
+b=1 if he does not.  If b=1, he will not get back X and will guess correctly
+again.  So Adv[A,F] = 1.
 
 --------------------------------------------------------------------------------
 4.
 
+When the input is 0^64:
+R0 = 0, L0=0
+R1 = F(k1,0), L1=0
+R2 = F(k2, F(k1,0)), L2 = F(k1,0)
+
+When the input is 1^32 || 0^32:
+R0 = 0, L0 = 1
+R1 = 1 xor F(k1, 0), L1 = 0
+R2 = F(k2, 1 xor F(k1, 0)), L2 = 1 xor F(k1, 0)
+
+so the first L2 should be the inverse of the second L2.
+This is the case for the pair _e86..., 179_
+
 --------------------------------------------------------------------------------
 5.
+
+First, note that
+c0 = F(k, F(k, 0))
+c1 = F(k, F(k, F(k, 0)))
+and that c1 = F(k, c0)
+
+In response to the attacker's request for the encryption of m1=c0 ^ c1 with
+nonce c0, the attacker receives:
+
+nonce |  c'0
+  c0  |  F(k,F(k,c0)^m1) = F(k,F(k,c0)^c0^c1) = F(k,c1^c0^c1) = F(k,c0) = c1
+
+So _c'0 = c1_
 
 --------------------------------------------------------------------------------
 6.
 
+If block number l/2 is corrupted, then that block and each block that comes
+after will be corrupted, so _2_ blocks of plaintext will be corrupted.
+
 --------------------------------------------------------------------------------
 7.
+
+With ctr, the counter value used to decrypt each block of ciphertext does not
+depend on the value of any other block.  Therefore with one block corrupted,
+only _1_ block of plaintext will be corrupted.
 
 --------------------------------------------------------------------------------
 8.
 
+The strings have length:
+
+'If qual...' -> 124
+'The sig...' -> 165
+'In this...' -> 108
+'To cons...' -> 221
+
+Each character is encoded to one byte. The messages of length 165 and 221
+are too big to encrypt to 128 bytes.  The message of length 124 could not have
+been encrypted to 128 bytes because the IV requires 16 bytes to send.
+
+So the message of length 108 encrypted to 124 bytes, with 4 bytes of padding.
+
 --------------------------------------------------------------------------------
 9.
 
+We are given to following.
+k[0]^k[2]^k[3] = 0011
+k[0]^k[2]^k[4] = 1010
+k[0]^k[1]^k[2]^k[3] = 0110
+
+
+We aim to find k[0]^k[1]^k[2]^k[4].
+
+k[0]^k[1]^k[2]^k[4] = 0110^k[3]^k[4] = 0110^1010^k[0]^k[2]^k[3]
+= 0110^1010^0011 = _1111_
+
+
+
+--------------------------------------------------------------------------------
