@@ -8,11 +8,44 @@ modification time_.
 --------------------------------------------------------------------------------
 2.
 
+--S(k, m xor 1^n) and V(k, m xor 1^n,t)
+Suppose an attacker can forge a pair (m', t') under (S',V') by sending some
+sequence of messages m_i and receiving tags t_i. He could then send m_i xor
+1^n to a (S, V) challenger and receive the same tags t_i, then forge the pair
+(m' xor 1^n, t').  This implies that (S, V) is not secure.  Therefore the MAC
+_is secure_.
 
+--S(k, m[0,...,n-2] || 0) and V(k, m[0,...,n-2] || 0, t)
+This MAC _is not secure_ because can attacker can ask for a message pair (m,t)
+with m[n-1] != 0 and produce the forgery (m[0,...,n-1] || 0, t)
+
+--[t <- S(k,m), output (t1,t2)] and [t1 == t2 ? V(k,m,t1) : "0"]
+If an attacker could generate a forgery (m', (t1', t2')) on (S',V') then that
+implies that V'(k, m, (t1', t2')) = 1, so t1'==t2' and V(k,m',t1') = 1.  Hence
+the attacker can forge the pair (m',t1') on S implying (S, V) is not secure.
+Therefore the MAC _is secure_.
+
+--S(k,m) and [m != 0^n ? V(k,m,t) : "1"]
+This MAC _is not secure_ because an attacker can trivially create a forgery,
+namely (0^n, t), where t is any sequence of 128 bits.
+
+--[m == 0^n ? S(k, 1^n) : S(k,m)] and [m == 0^n ? V(k,1^n,t) : V(k,m,t)]
+The MAC _is not secure_.  The attacker can send m_1 = 0^n to receive tag
+t_1=S(k,1^n).  The attacker can then forge the pair (m,t) = (1^n, t_1)
+
+--S(k,m)[0,...126] and [V(k,m,t||0) or V(k,m,t||1)]
+If an attacker can forge a message pair on (S',V') with probability P, then we
+can forge a message pair on (S,V) with probability P/2.  Since P/2 is
+negligible, P is also negligible. So the MAC _is secure_.
 
 --------------------------------------------------------------------------------
 3.
 
+The attacker found that m -> (r,t).  In other words, t=F(k1, F(k, (m xor r))).
+The attacker can forge _(m xor 1^n, (r xor 1^n, t))_ because ECBC checks that
+t = F(k1, F(k, (m' xor r'))) = F(k1, F(k, (m xor 1^n xor r xor 1^n))).
+
+We see from the above that this is true and ECBC outputs "1"
 
 --------------------------------------------------------------------------------
 4.
