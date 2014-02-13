@@ -48,7 +48,7 @@ def self_test(testsPath):
             if hashHex == f:
                 print("MATCH {}".format(f))
             else:
-                print("NO MATCH {} != ".format(f, hashHex))
+                print("NO MATCH {} != {}".format(f, hashHex))
         except Exception as e:
             print("ERROR {} -> {}".format(f, e))
 
