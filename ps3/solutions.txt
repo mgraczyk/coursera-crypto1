@@ -22,7 +22,7 @@ with m[n-1] != 0 and produce the forgery (m[0,...,n-1] || 0, t)
 --[t <- S(k,m), output (t1,t2)] and [t1 == t2 ? V(k,m,t1) : "0"]
 If an attacker could generate a forgery (m', (t1', t2')) on (S',V') then that
 implies that V'(k, m, (t1', t2')) = 1, so t1'==t2' and V(k,m',t1') = 1.  Hence
-the attacker can forge the pair (m',t1') on S implying (S, V) is not secure.
+the attacker can forge the pair (m',t1') on implying (S, V) is not secure.
 Therefore the MAC _is secure_.
 
 --S(k,m) and [m != 0^n ? V(k,m,t) : "1"]
@@ -50,29 +50,103 @@ We see from the above that this is true and ECBC outputs "1"
 --------------------------------------------------------------------------------
 4.
 
+For this scheme to work, no user can have a superset of the keys of any other
+user.  We can see from the options that
+
+    S1 = {k1} ... S4 = {k1,k3}
+
+    ... S4 = {k2,k3,k4} ... S6 = {k3,k4}
+
+    S1 = {k1,k2} ... S5 = {k1,k2}
+
+are all invalid. This leaves the remaining option as the only valid choice.
+
+    S1={k2,k4},  S2={k2,k3},  S3={k3,k4},  S4={k1,k3},  S5={k1,k2},  S6={k1,k4}
 
 --------------------------------------------------------------------------------
 5.
 
+We would call AES once to undo the final encryption stage, once to undo the
+last CBC stage, then we would xor the final bin of the CBC state, recompute
+F(k, m'), then compute F(k1, .).  So we would have to call AES _4 times_.
 
 --------------------------------------------------------------------------------
 6.
 
+    H′(m)=H(m)[0,…,31]    (i.e. output the first 32 bits of the hash)
+
+This hash function _is not collision resistant_ because the tag space is too
+small.  An attacker can simply hash 2^16 messages to have a 1/2 chance of
+finding a collision.
+
+    H′(m)=H(H(m))
+
+Suppose an attacker finds m1 and m2 so that H(H(m1)) == H(H(m2)).  Then the
+attacker could simply let H(m1) = m1' and H(m2) = m2' and show that H(m1') =
+H(m2').  Since H is collision resistant, no such (m1', m2') can be found so
+the hash _is collision resistant_.
+    
+    H′(m)=H(H(H(m)))
+
+The hash _is collision resistant_ from the same argument as for H(H(m)).
+
+    H′(m)=H(|m|)    (i.e. hash the length of m)
+
+The hash clearly _is not collision resistant_ because an attacker could
+produce a collision with any (m1,m2) where |m1| == |m2|
+
+    H′(m)=H(0)
+
+The hash clearly _is not collision resistant_ because all messages collide.
+
+    H′(m)=H(m || 0)
+
+The hash _is collision resistant_.  If an attacker can find m1, m2 such that
+H'(m1) == H'(m2), then he could produce H(m1 || 0) == H(m2 || 0).  Since H is
+collision resistant, such a pair (m1,m2) does not exist.
+
+    H′(m)=H(m) xor H(m xor 1^|m|)    (where m xor 1^|m| is the complement of m)
+
+This hash _is not collision resistant_.  An attacker can produce any pair
+(m, ~m) -> (H(m) xor H(~m), H(~m) xor H(m)) which is a collision.
 
 --------------------------------------------------------------------------------
 7.
 
 
+Either H1(x) == H1(y), or it does not.  If it does, then x and y are a
+collision for H1.  If it does not, then H1(x) and H1(y) are a collision for
+H2.
+
+A little too easy....?
+
 --------------------------------------------------------------------------------
 8.
 
+    f1(x,y) = AES(y,x) xor y
+
+We aim to find x1,y1,x2,y2 such that
+
+    AES(y1,x1) xor y1 = AES(y2,x2) xor y2
+->  AES(y1,x1) = AES(y2,x2) xor y2 xor y1
+
+So first just let x2,y2 = (0^n, 1 || 0^n-1) and y1 = 11 || 0^n-2.
+Then AES(y2,x2) = f5569b3ab6a6d11efde1bf0a64c6854a
+so AES(y1,x1) = f5569b3ab6a6d11efde1bf0a64c6854a xor 0^n xor 11 || 0^n-2
+    = e4569b3ab6a6d11efde1bf0a64c6854a 
+so x1 = bc042352a96d8509fd1722c082c85c0c
 
 --------------------------------------------------------------------------------
 9.
 
+    f2(x,y) = AES(x,x) xor y
+
+The result can be computed similar to the method in problem 8.
 
 --------------------------------------------------------------------------------
 10.
 
+The bound must be greater than for a 2 way collision, so O(|T|^2/3) makes
+sense...
 
 --------------------------------------------------------------------------------
