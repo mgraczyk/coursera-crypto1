@@ -26,7 +26,7 @@ _20814804c1767293bd9f1d9cab3bc3e7 ac1e37bfb15599e5f40eef805488281d_
 --------------------------------------------------------------------------------
 2.
 
-> E(k2, E(k2,m)) and ( D(k2,c) == bottom ? bottom : D(k1, D(k2,c))
+> E(k2, E(k1,m)) and ( D(k2,c) == bottom ? bottom : D(k1, D(k2,c))
 This system _does provide AE_.  Suppose an attacker could for a c that does
 not result in D' output bottom.  Then the attacker could could use the
 same strategy against (E,D) with by encrypting outgoing messages with k2 and
@@ -65,6 +65,7 @@ and passing them to the (E',D') adversary.
 This system _does not provide AE_. E' will output distinct (c1,c2) since E
 must be randomized to be AE.  Thus the adversary can forge (c1,c1) and win the
 integrity game.
+
 --------------------------------------------------------------------------------
 3.
 
