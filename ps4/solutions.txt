@@ -55,6 +55,16 @@ which he receives (c, c).  He then sends the ciphertext (c, ~c).  Since (c, ~c) 
 not equal to (c, c) and D'(k, (c, ~c)) = D(k, c) = m (not bottom), the
 attacker has successfully forged a valid ciphertext.
 
+> E'=(E(k,m), E(k,m)) and D'(k, (c1,c2)) = c1 == c2 ? D(k, c1) : bottom
+This system _does provide AE_.
+Any forgery on (E',D') is also a forgery for (E,D).  Any CPA on (E',D') can be
+converted into a CPA on (E,D) by simply duplicating ciphertexts from E(k,m)
+and passing them to the (E',D') adversary.
+
+> (E(k,m), E(k,m)) and D' = {D(k,c1)==D(k,c2) ? D(k,c1) : bottom}
+This system _does not provide AE_. E' will output distinct (c1,c2) since E
+must be randomized to be AE.  Thus the adversary can forge (c1,c1) and win the
+integrity game.
 --------------------------------------------------------------------------------
 3.
 
