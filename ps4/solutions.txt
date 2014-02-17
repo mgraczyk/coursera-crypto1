@@ -1,0 +1,139 @@
+--------------------------------------------------------------------------------
+1.
+
+We receive the following ciphertext.
+
+20814804c1767293b99f1d9cab3bc3e7 ac1e37bfb15599e5f40eef805488281d
+
+The first 16 bytes are the IV.  We see that on decryption, the IV will be
+XORed with the decryption of the first message block.  We simply identify the
+position of the number '1' in "Pay Bob 100$",
+
+20814804c1767293b99f1d9cab3bc3e7 
+P A Y   B O B   1 0 0 $
+
+then we replace the '1' with a '5' by XORing the correct positon with ord('1')
+^ ord('5') = 0x04, where ord(x) is the ASCII encoding of x.
+
+    20814804c1767293b99f1d9cab3bc3e7
+xor 00000000000000000400000000000000
+____________________________________
+   =20814804c1767293bd9f1d9cab3bc3e7
+
+So the resulting ciphertext is
+_20814804c1767293bd9f1d9cab3bc3e7 ac1e37bfb15599e5f40eef805488281d_
+
+--------------------------------------------------------------------------------
+2.
+
+> E(k2, E(k2,m)) and ( D(k2,c) == bottom ? bottom : D(k1, D(k2,c))
+This system _does provide AE_.  Suppose an attacker could for a c that does
+not result in D' output bottom.  Then the attacker could could use the
+same strategy against (E,D) with by encrypting outgoing messages with k2 and
+decrypting incoming messages with k2.  Similarly, if the attacker could mount
+a CPA against (E',D'), he could use the same attack to mount a CPA against
+(E,D) by encrypting and decrypting with k2 before sending or receiving data.
+
+> (E(k,m), 0) and D'(k (c,b)) = b == 0 ? D(k,c) : bottom
+This system _does provide AE_.  An attacker who can mount a CPA or existential
+forgery on (E',D') can use the same method on (E,D).  He can send messages to
+E, pad them with 0.  Any ciphertext he submits must have b==0 or else D' would
+have output bottom, so he can simply remove the appended zeros from his
+forgery from D' to create a forgery for D.  The process is similar for a CPA
+attack.
+
+> E'=E and D' = D if D != bottom, or 0^n otherwise.
+This system _does not provide AE_.  An attacker can submit any ciphertext
+without receiving bottom in return, so his advantage in the integrity game is
+1 (and he doesn't even have to submit any messages for encryption by the
+challenger).
+
+> (E(k,m), E(k,m)) and D'(k, (c1,c1)) = D(k,c1)
+This system _does not provide AE_.  An attacker can mount the following
+integrity attack.  He first asks for the encryption of some arbitrary m, for
+which he receives (c, c).  He then sends the ciphertext (c, ~c).  Since (c, ~c) is
+not equal to (c, c) and D'(k, (c, ~c)) = D(k, c) = m (not bottom), the
+attacker has successfully forged a valid ciphertext.
+
+--------------------------------------------------------------------------------
+3.
+
+This question seems more like a reaffirmation of the lecture contents than a
+real question.  Any response that includes "implement ... yourself" or "invent
+your own" is clearly wrong.  Also, just using CBC encryption does not provide
+message integrity.  Therefore the correct answer is to _use a standard
+implementation of one of the authenticated encryption modes GCM, CCM, EAX, or
+OCB_.
+
+--------------------------------------------------------------------------------
+4.
+
+In order for (E,D) to create a secure MAC, it must not be possible for an
+attacker to create a forgery.  Chosen ciphertext security isn't enough.  Need
+Authenticated Encryption.
+
+--------------------------------------------------------------------------------
+5.
+
+When the key is sampled from the non-uniform distribution, it will always be
+the case that MSB_128(c) = 0^128.  Any PRF that becomes non-random for inputs
+with MSB_128(c) = 0^128 is insecure when taking inputs from the distribution.
+
+The PRF _F'(k,x) = MSB_128(c) != 0^128 ? F(k,x) : 1^256_ will almost always
+evaluate to F(k,x), as long as k is sampled uniformly over K.  However, when k
+is sampled only from the subset of K where the most significant 128 bits are
+zero, F' will always evaluate to 1^256 and will thus be insecure.
+
+--------------------------------------------------------------------------------
+6.
+
+DAE can be used whenever messages are very likely to be unique.  It shouldn't
+be used if there is a chance that identical messages will be encrypted.  
+
+--------------------------------------------------------------------------------
+7.
+
+Let E(k,x) be a secure block cipher and E'((k1,k2),t,x) = E(k1,x) xor E(k2,t)
+
+A tweakable block cipher is insecure if an adversary can distinguish the
+cipher from a random permutation in the tweak space.
+
+E' is not secure.  An adversary can request the encryptions of 
+
+a. [0](m1)     ->      E(k1,m1) xor E(k2,0)
+b. [1](m1)     ->      E(k1,m1) xor E(k2,1)
+c. [0](m2)     ->      E(k1,m2) xor E(k2,0)
+d. [1](m2)     ->      E(k1,m2) xor E(k2,1)
+
+He then computes
+
+a ^ b = E(k2,0) ^ E(k2,1)
+c ^ d = E(k2,0) ^ E(k2,1)
+
+The attacker checks that a^b==c^d.  With very high probability, he will
+determine whether or not the challenger is using E'.  Therefore his advantage
+in the tweakable CPA game is ~1 and E' is not secure.
+
+--------------------------------------------------------------------------------
+8.
+
+Each iteration is an independent, identically distributed bernoulli random
+variable, so the number of steps in the whole algorithm is a geometric random
+variable.  The probability of "success" for each trial is p = 10^16/2^128, so
+the expected number of trials is 1/p = _2^128/10^16_.
+
+--------------------------------------------------------------------------------
+9.
+
+The MAC _is secure_. Suppose an adversary could forge a message tag pair
+(m,t).  He could then mount attack (E,D) by making the requests needed to find
+(m,t), then asking for the encryption of [m](0).  If E(k, m, 0) == t, then the
+adversary knows that the challenger is using E instead of a random function.
+
+--------------------------------------------------------------------------------
+10.
+
+A padding oracle guesses all 256 possibilities of each byte's value for each
+byte.  In the worst case an attacker would ahve to make 256*48 = _12288_.
+
+--------------------------------------------------------------------------------
