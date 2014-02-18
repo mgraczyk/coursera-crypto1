@@ -47,7 +47,7 @@ class PaddingOracle(object):
         return b''.join(self._ptGuesses)
 
     def _attack_block(self, block):
-        poolSZ = 256
+        poolSZ = 128
         pool = multiprocessing.dummy.Pool(poolSZ)
 
         for blockPos in reversed(range(self.block_size)):
@@ -57,7 +57,7 @@ class PaddingOracle(object):
                     ((islice(self._ct, block*self.block_size),
                      self._guess_block(block, blockPos, g),
                      islice(self._ct, (block+1)*self.block_size, (block+2)*self.block_size))
-                    for g in range(256)))
+                    for g in range(128)))
 
             res = list(res)
 
