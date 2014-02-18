@@ -41,7 +41,7 @@ class PaddingOracle(object):
         #poolSZ = 64
         #pool = multiprocessing.Pool(poolSZ)
 
-        for block in range(2, self._numPTBlocks):
+        for block in range(0, self._numPTBlocks):
             self._attack_block(block)
 
         return b''.join(self._ptGuesses)
@@ -60,8 +60,13 @@ class PaddingOracle(object):
                     for g in range(256)))
 
             res = list(res)
-            value = next(v for v,correct in enumerate(res) if correct)
-            assert(value is not None)
+
+            try:
+                value = next(v for v,correct in enumerate(res) if correct)
+            except StopIteration:
+                print("Stopped")
+                # This is the start of the pad at the end of the message
+                value = next(v for v,correct in enumerate(res) if correct is None)
 
             print("Correctly guessed [{}][{}] = {}".format(block, blockPos, value))
             self._ptGuesses[block][blockPos] = value
@@ -88,8 +93,9 @@ class PaddingOracle(object):
             status = urllib.request.urlopen(req)
         except urllib.error.URLError as e:
             status = e.code
-            assert(status in (200, 403, 404))
-            return status == 404 or status == 200
+            assert(status in (403, 404))
+            return status == 404
+
 
 def self_test():
     targetURL = 'http://crypto-class.appspot.com/po?er='
