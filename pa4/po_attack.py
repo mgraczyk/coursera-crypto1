@@ -1,6 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import requests
+import urllib
+import urllib.error
+import urllib.request
 import multiprocessing.dummy
 import sys
 
@@ -39,11 +41,8 @@ class PaddingOracle(object):
         #poolSZ = 64
         #pool = multiprocessing.Pool(poolSZ)
 
-        try:
-            for block in range(self._numPTBlocks):
-                self._attack_block(block)
-        except Exception as e:
-            print("ERROR: {}".format(e))
+        for block in range(2, self._numPTBlocks):
+            self._attack_block(block)
 
         return b''.join(self._ptGuesses)
 
@@ -54,7 +53,7 @@ class PaddingOracle(object):
         for blockPos in reversed(range(self.block_size)):
             print("Guessing [{}][{}]".format(block, blockPos))
 
-            res = map(self.query,
+            res = pool.map(self.query,
                     ((islice(self._ct, block*self.block_size),
                      self._guess_block(block, blockPos, g),
                      islice(self._ct, (block+1)*self.block_size, (block+2)*self.block_size))
@@ -83,14 +82,19 @@ class PaddingOracle(object):
         queryHex = hexlify(bytes(chain.from_iterable(parts)))
         target = self._targetURL + queryHex.decode("ascii")
 
-        req = requests.get(target)
-        assert(req.status_code in (403,404))
-        return req.status_code == 404
+        req = urllib.request.Request(target)
+        
+        try:
+            status = urllib.request.urlopen(req)
+        except urllib.error.URLError as e:
+            status = e.code
+            assert(status in (200, 403, 404))
+            return status == 404 or status == 200
 
 def self_test():
     targetURL = 'http://crypto-class.appspot.com/po?er='
 
-    target = "f20bdba6ff29eed7b046d1df9fb7000058b1ffb4210a580f748b4ac714c001bd4a61044426fb515dad3f21f18aa577c0bdf302936266926ff37dbf7035d5eeb4"
+    target = b'f20bdba6ff29eed7b046d1df9fb7000058b1ffb4210a580f748b4ac714c001bd4a61044426fb515dad3f21f18aa577c0bdf302936266926ff37dbf7035d5eeb4'
 
     po = PaddingOracle(targetURL, unhexlify(target))
     pt = po.attack()
