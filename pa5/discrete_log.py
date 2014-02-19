@@ -1,24 +1,31 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import math
+import gmpy
+
+from gmpy import mpz
+
+def compute_x0s(p,h,g,B):
+   return ((i, g**(B*mpz(i)) % p) for i in range(B))
 
 def discrete_log(p, h, g, maxExp=40):
    """ Computes x such that h = g^x mod p 
    """
 
-   B = 2**(int(maxExp/2))
+   B = mpz(2**(int(maxExp/2)))
+   
+   g = mpz(g)
+   h = mpz(h)
+   p = mpz(p)
 
-   print("Computing x0s...")
-   x0s = tuple(enumerate(tuple((((g**B)**i) % p) for i in range(B))))
    print("Computing x1s...")
-   x1s = tuple(enumerate(tuple((h/(g**i) % p) for i in range(B))))
+   x1s = { h*(g**mpz(i)).invert(p) % p:i for i in range(B) }
 
    print("Checking for equality...")
-   for x1, exprL in x1s:
-       print("Checking x1=={}".format(x1))
-       for x0, exprR in x0s:
-           if exprL == exprR:
-               return x0*B+x1
+   for x0, exprR in compute_x0s(p,h,g,B):
+       x1 = x1s.get(exprR)
+       if x1 is not None:
+           return x0*B+x1
 
    raise ValueError("No suitable x0, x1 found!")
 
@@ -29,16 +36,28 @@ def self_test():
 
     h = 3239475104050450443565264378728065788649097520952449527834792452971981976143292558073856937958553180532878928001494706097394108577585732452307673444020333
   
+    print("Running tiny test")
+    xTiny = 3
+    x = discrete_log(97, 20, 57, 6)
+    print("x == {}".format(x))
+    assert(xTiny == x)
+    print("Tiny test passed!")
+    print("")
+
+    print("Running short test")
     xShort = 23232
-    x = discrete_log(1938281, 190942, 1737373, 20)
+    x = discrete_log(1938281, 190942, 1737373, 16)
     print("x == {}".format(x))
     assert(xShort == x)
     print("Short test passed!")
+    print("")
     
+    print("Running long test")
     x = discrete_log(p, h, g)
     assert(h == (g**x) % p)
     print("x == {}".format(x))
     print("Long test passed!")
+    print("")
 
 if __name__ == "__main__":
     self_test()
