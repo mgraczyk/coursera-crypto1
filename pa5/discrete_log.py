@@ -1,12 +1,16 @@
 #!/usr/bin/python
 
+import sys
 import math
-import gmpy
+import gmpy2
 
-from gmpy import mpz
+from gmpy2 import mpz
+from gmpy2 import invert
+from gmpy2 import powmod
+from gmpy2 import divm
 
 def compute_x0s(p,h,g,B):
-   return ((i, g**(B*mpz(i)) % p) for i in range(B))
+   return ((i, powmod(g, B*i, p)) for i in range(B))
 
 def discrete_log(p, h, g, maxExp=40):
    """ Computes x such that h = g^x mod p 
@@ -19,13 +23,16 @@ def discrete_log(p, h, g, maxExp=40):
    p = mpz(p)
 
    print("Computing x1s...")
-   x1s = { h*(g**mpz(i)).invert(p) % p:i for i in range(B) }
+   x1s = { divm(h, powmod(g,i,p), p) : i for i in range(B) }
 
    print("Checking for equality...")
    for x0, exprR in compute_x0s(p,h,g,B):
        x1 = x1s.get(exprR)
        if x1 is not None:
-           return x0*B+x1
+           print("Found values!")
+           print("x0 = {}".format(x0))
+           print("x1 = {}".format(x1))
+           return mpz(x0)*B+mpz(x1)
 
    raise ValueError("No suitable x0, x1 found!")
 
@@ -53,8 +60,8 @@ def self_test():
     print("")
     
     print("Running long test")
-    x = discrete_log(p, h, g)
-    assert(h == (g**x) % p)
+    x = discrete_log(p, h, g, 40)
+    assert(h == powmod(g,x,p))
     print("x == {}".format(x))
     print("Long test passed!")
     print("")
