@@ -1,0 +1,70 @@
+--------------------------------------------------------------------------------
+1.
+
+First, Alice contacts the TTP.  At minimum, she must receive from the server
+the shared key encrypted with her own private key, or E(k_a, k_abc).
+
+She must also not send the shared key in the clear.  Therefore the TTP should
+send Alice
+_
+E(k_a, k_abc), ticket1 <- E(k_b, k_abc), ticket2 <- E(k_c, k_abc)
+Alice sends ticket1 to Bob and ticket2 to Carol
+_
+
+--------------------------------------------------------------------------------
+2.
+
+> f := g^(x+y)
+This function _is not difficult to compute_. Specifically, an attacker can
+compute f by simply computing g^x * g^y = g^(x+y).
+
+> f := g^(x-y)
+This function _is not difficult to compute_. Specifically, an attacker can
+compute f by simply computing g^x/g^y = g^(x-y).
+
+> f := g^(xy + x + y + 1)
+This function _is difficult to compute_.  Suppose an attacker can compute f.
+He could then compute DH with the equation
+DH(g^x, g^y) = g^xy = f(g^x, g^y)/(g * g^x * g^y)
+
+> f := g^2xy
+This function _is difficult to compute_.  Suppose an attacker can compute f.
+He could then compute DH with the equation
+
+DH(g^x, g^y) = g^xy = sqrt_p(f(g^x, g^y))
+Where sqrt is the square root modulo p, which is "easy" for a finite cyclic
+group Z_p
+
+--------------------------------------------------------------------------------
+3.
+
+
+--------------------------------------------------------------------------------
+4.
+
+
+--------------------------------------------------------------------------------
+5.
+
+
+--------------------------------------------------------------------------------
+6.
+
+
+--------------------------------------------------------------------------------
+7.
+
+
+--------------------------------------------------------------------------------
+8.
+
+
+--------------------------------------------------------------------------------
+9.
+
+
+--------------------------------------------------------------------------------
+10.
+
+
+--------------------------------------------------------------------------------
