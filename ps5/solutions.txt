@@ -59,7 +59,7 @@ communicates insecurely with Bob.
 Using some simple python, we see that (a,b) = (10,-3)
 
 In Z_23, 7a + 23b = 7a and 1 = 1.
-So 7a = or _a^-1 = 10_
+So 7a = 1, or _7^-1 = 10_
 
 --------------------------------------------------------------------------------
 6.
@@ -86,7 +86,7 @@ So consider the ring Z_11.
 x^(10) = 1 in Z_11
 
 We notice that 2^(10001) = 2*2^(10000) = 2*((((2^10)^10)^10)^10) = 2*1 =
-_2_ in Z_11
+2 in Z_11
 
 --------------------------------------------------------------------------------
 9.
@@ -100,7 +100,7 @@ Since 35 = 7*5, phi(35) = 24.
 From Euler's theorem, we see that 2^24 = 2^phi(35) = 1 in Z_35
 
 So we have 2^245 = 2^5 * 1 =
-35 in Z_35
+32 in Z_35
 
 --------------------------------------------------------------------------------
 10.
@@ -188,5 +188,6 @@ An element g in Z*_p is a generator if |<g>| = |Z*_p|.
 The set of generators of Z*_p is precisely the set {g : |<g>| = |Z*_p| = p-1}
 
 TODO: Finish
+phi(p-1)
 
 --------------------------------------------------------------------------------
