@@ -34,6 +34,16 @@ DH(g^x, g^y) = g^xy = sqrt_p(f(g^x, g^y))
 Where sqrt is the square root modulo p, which is "easy" for a finite cyclic
 group Z_p
 
+> f := f^(x(y+1))
+This function _is difficult to compute_.  Suppose an attacker can compute f.
+He could then compute DH with the equation
+
+DH(g^x, g^y) = g^xy = f(g^x, g^y)/g^x
+
+> f := sqrt(g)^(x+y)
+This function _is not difficult_ to compute. Specifically, an attacker could
+compute f from sqrt(g^x * g^y) = f(g^x, g^y)
+
 --------------------------------------------------------------------------------
 3.
 
@@ -121,7 +131,7 @@ So ord_2(35) = 12
 11.
 
 The generated groups shown are not trickery.  Since 13 is prime, all postive
-integers less than 13 are in Z*_13. So the generators are 2 and 7.
+integers less than 13 are in Z*_13. So the generators are 2, 6, and 7.
 
 --------------------------------------------------------------------------------
 12.
@@ -161,13 +171,13 @@ We aim to find 2^(1/11) in Z_19.
 We have a theorem that says when gcd(e, p-1) = 1, then c^(1/e) is c^(e^-1)
 Fortunately, 11 and 18 are coprime.  That is, gcd(11, 18) = 1.
 
-So 2^(1/11) = 2^(11^-1)
+So 2^(1/11) = 2^(d), where d = the inverse of 11 in Z_18
 
-The inverse of 11 in Z_19 can be found efficiently using euclid's algorithm.
-We compute 11^-1 = 7
+The inverse of 11 in Z_18 can be found efficiently using euclid's algorithm.
+We compute 11^-1 = 5
 
-so the 11th root of 2 in Z_19 is 2^7
-= 14 in Z_19.
+so the 11th root of 2 in Z_19 is 2^5
+= 13 in Z_19.
 
 --------------------------------------------------------------------------------
 14.
