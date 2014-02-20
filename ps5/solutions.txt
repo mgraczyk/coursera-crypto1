@@ -38,14 +38,29 @@ group Z_p
 --------------------------------------------------------------------------------
 3.
 
+Since Bob sends Alice g^(1/b), she has no way of computing g^ab.  The secret
+key must therefore be g^(a/b).  They generate this key as B^a and A^(1/b).  In
+other words:
+
+_secret = g^(a/b).  Alice computes the secret as B^a and Bob computes A^(1/b).
 
 --------------------------------------------------------------------------------
 4.
 
+The additional step _does not_ prevent the MitM attack.  An attacker can
+intercept the initial message from Alice to Bob, and replace pk with pk'.  He
+sends pk' to Bob, who responds with (E(pk', x), S(x, E(pk', x)).  The attacker
+then decrypts E(pk', x) to determine x, computes E(pk, x), and sends
+(E(pk,x),S(x,E(pk,x)) to Alice.  Alice sees that the MAC is correct and
+communicates insecurely with Bob.
 
 --------------------------------------------------------------------------------
 5.
 
+Using some simple python, we see that (a,b) = (10,-3)
+
+In Z_23, 7a + 23b = 7a and 1 = 1.
+So 7a = or _a^-1 = 10_
 
 --------------------------------------------------------------------------------
 6.
