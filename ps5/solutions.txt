@@ -6,10 +6,9 @@ the shared key encrypted with her own private key, or E(k_a, k_abc).
 
 She must also not send the shared key in the clear.  Therefore the TTP should
 send Alice
-_
+
 E(k_a, k_abc), ticket1 <- E(k_b, k_abc), ticket2 <- E(k_c, k_abc)
 Alice sends ticket1 to Bob and ticket2 to Carol
-_
 
 --------------------------------------------------------------------------------
 2.
@@ -69,13 +68,13 @@ So 7a = or _a^-1 = 10_
 3x = 5
 
 x = 5 * (3^-1) = 5 * 13 = 65 mod 19
-= _8_
+= 8
 
 --------------------------------------------------------------------------------
 7.
 
 We aim to find |Z*_35|
-Since 35 = 7*5, |Z*_35| = 35 - 7 - 5 + 1 = _24_
+Since 35 = 7*5, |Z*_35| = 35 - 7 - 5 + 1 = 24
 
 --------------------------------------------------------------------------------
 8.
@@ -101,7 +100,7 @@ Since 35 = 7*5, phi(35) = 24.
 From Euler's theorem, we see that 2^24 = 2^phi(35) = 1 in Z_35
 
 So we have 2^245 = 2^5 * 1 =
-_35_ in Z_35
+35 in Z_35
 
 --------------------------------------------------------------------------------
 10.
@@ -116,27 +115,78 @@ Clearly ord_2(35) > 5, so we try 6, 8, and 12.
 2^8 = 256 = 11 in Z*_35
 2^12 = 4096 = 1 in Z*_35
 
-So ord_2(35) = _12_
+So ord_2(35) = 12
 
 --------------------------------------------------------------------------------
 11.
 
-
+The generated groups shown are not trickery.  Since 13 is prime, all postive
+integers less than 13 are in Z*_13. So the generators are 2 and 7.
 
 --------------------------------------------------------------------------------
 12.
 
+We aim to find the solution to x^2 + 4x + 1 = 0 in Z_23
+
+We use the formula
+
+x = (-b +- sqrt(b^2 - 4ac))/2a
+= (-b +- sqrt(b^2 -4ac) * (2a)^-1
+= (-4 +- sqrt(16 - 4)) * 2^-1
+= (-4 +- sqrt(12)) * 2^-1
+
+The inverse of 2 in Z*_23 can be found easily since 2^-1 in Z_N for any odd N
+is just (N+1)/2.  Here N=23, so 2^-1 = 12. Thus we have
+
+= (-4 +- sqrt(12)) * 12
+
+Now since 23 = 3 mod 4, sqrt(12) can be computed using the simple relation
+sqrt(c) = c^((p+1)/4) in Zp where p is 23. So
+sqrt(12) = 12^(24/4) mod 23 = 12^6 mod 23 = 9
+So now we have
+
+x = (-4 +- 9) * 12
+= {5*12, -13*12} = {60, -156}
+= {14, 5} in Z_23
+
+We can verify easily:
+14^2 + 4*14 + 1 = 253 = 23*11
+5^2 + 4*5 + 1 = 46 = 23*2 
 
 --------------------------------------------------------------------------------
 13.
 
+We aim to find 2^(1/11) in Z_19.
+
+We have a theorem that says when gcd(e, p-1) = 1, then c^(1/e) is c^(e^-1)
+Fortunately, 11 and 18 are coprime.  That is, gcd(11, 18) = 1.
+
+So 2^(1/11) = 2^(11^-1)
+
+The inverse of 11 in Z_19 can be found efficiently using euclid's algorithm.
+We compute 11^-1 = 7
+
+so the 11th root of 2 in Z_19 is 2^7
+= 14 in Z_19.
 
 --------------------------------------------------------------------------------
 14.
 
+We aim to find Dlog_2(5) in Z_13.
+
+That is, we aim to find x so that 5 = 2^x in Z_13.
+
+From inspection of the generated group <2>, we see that 2^9 = 5 in Z_13, so
+Dlog_2(5) = 9 in Z_13.
 
 --------------------------------------------------------------------------------
 15.
 
+Let p be a prime number.
+
+An element g in Z*_p is a generator if |<g>| = |Z*_p|.
+The set of generators of Z*_p is precisely the set {g : |<g>| = |Z*_p| = p-1}
+
+TODO: Finish
 
 --------------------------------------------------------------------------------
