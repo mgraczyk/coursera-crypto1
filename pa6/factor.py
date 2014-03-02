@@ -3,13 +3,14 @@
 import gmpy2
 
 from gmpy2 import mpz
+from gmpy2 import powmod
 from gmpy2 import isqrt
 from gmpy2 import isqrt_rem
 from gmpy2 import div
-from gmpy2 import c_div
-from gmpy2 import f_div
+from gmpy2 import invert
 
 from math import ceil
+from binascii import unhexlify
 
 import challenges
 
@@ -91,6 +92,17 @@ def factor(N):
 
     return ch3_factor(N)
 
+def decrypt_RSA(ciphertext, pk):
+    N, e = pk
+
+    p,q = factor(N)
+    phiN = N - p - q + 1
+
+    d = invert(e, phiN)
+
+    return powmod(ciphertext, d, N)
+
+
 def self_test():
     Ns = challenges.Ns
 
@@ -102,6 +114,14 @@ def self_test():
         else:
             print("ERROR: Incorrectly factored N[{}]!".format(num))
 
+    # Find the plaintext
+    pt = decrypt_RSA(challenges.ciphertext_1, (challenges.N_1, challenges.e_1))
+    ptHex = hex(pt)
+    pos = ptHex.find("00")
+    print("Plaintext:")
+    print(ptHex)
+    print("Message:")
+    print(unhexlify(ptHex[pos+2:]))
 
 if __name__ == "__main__":
     self_test()
