@@ -85,29 +85,86 @@ So (3*da - 1) is an integer multiple of phi(N).
 --------------------------------------------------------------------------------
 5.
 
+Alice has found a value y with the property that 
+
+{ y = 1 mod p = kp + 1
+{ y = -1 mod q = lq - 1
+
+or
+
+{ y = -1 mod p = kp - 1
+{ y = 1 mod q = lq + 1
+
+Therefoer gcd(N, y-1) is either p or q.  In either case, she can easily find the
+factors of N by letting p = gcd(N, y-1) and q = N/p.
 
 --------------------------------------------------------------------------------
 6.
 
+The totient function is multiplicative, so
+phi(N)
+= phi(pqr)
+= phi(p)phi(q)phi(r)
+= (p-1)(q-1)(r-1)
 
 --------------------------------------------------------------------------------
 7.
 
+We can compute s1^a * s2^b = s^(ar1) * s^(br2) = s^(ar1 + br2) = s^1 = s
 
 --------------------------------------------------------------------------------
 8.
+
+The attacker asks for the encryption of m0 and m1, which are
+E(pk,m0) = (c0,c1) = (g^r, m0*g^xr) for random r
+
+and
+
+E(pk,m1) = (c2,c3) = (g^r, m1*g^xr) for random r
+
+He wishes to compute
+E(pk,m0*m1) = (g^r, m0*m1*g^xr) for random r
+
+He can compute this value by picking a random r in Zn, then computing
+(c0*c2, c1*c3) = (g^(r1+r2), m0*m1*h^(r1+r2))
 
 
 --------------------------------------------------------------------------------
 9.
 
+If a1 + a2 = a, then we can can share the computation of v by recognizing that
+v = u^a = u^(a1 + a2) = u^a1 * u^a2.
+
+So party 1 computes u1 = u^a1, party 2 computes u2 = u^a2, and the results are
+combined using v = u1 * u2.
 
 --------------------------------------------------------------------------------
 10.
 
+Since B2 = (A2/g^b)^r * A0^s and A2 = g^(xy + a),
+
+B1 = (A1^r * g^s) = g^(yr+s) 
+B2 = (A2/g^b)^r * A0^s = g^(r(xy+a-b) + sx)
+
+So considering the exponents
+B1^x = rxy + sx
+B2 = rxy + (ra - rb) + sx
+
+If a == b then 
+B2/B1^x = rxy + (0) + sx - rxy - sx = 0 in the exponent
+
+So she checks that B2/B1^x  == 1
 
 --------------------------------------------------------------------------------
 11.
 
+In the proof of the bounds on Wiener's attack where N=pq, we found that 
+|N - phi(N)| <= p+q <= 3 sqrt(N)
+
+When N is product of 3 primes p,q,r we see that
+phi(N) = pqr - pq - pr - qr + p + q + r - 1
+|N - phi(N)| <= 4*N^(2/3)
+
+Nothing else in the proof changes, so we require d <= N^(1/6)/c
 
 --------------------------------------------------------------------------------
