@@ -1,19 +1,86 @@
 --------------------------------------------------------------------------------
 1.
 
-
+Ciphertexts that are the same length as their corresponding plaintext are not
+MACed, so they cannot gaurentee authenticated encryption.  Therefore public-key
+systems with "short" ciphertexts can never be secure.
 
 --------------------------------------------------------------------------------
 2.
 
+Suppose (G, E, D) is a deterministic public key encryption system.  An attacker
+can win the CPA game by submitting any message pair (m0, m1) with m0 != m1 to
+receive challenge ciphertext c.  He then encrypts both m0 and m1 to get c0,c1.
+He then outputs b' = 1 if c == 1 else 0.  He wins the game with advantage 1.
+He can use the same strategy to win the CCA game.
+
+Therefore no deterministic public key encryption system can be semantically
+secure.
 
 --------------------------------------------------------------------------------
 3.
 
+Let (Gen, E, D) be CCA secure pk encryption system with M = {0,1}^128.
+
+>E' = (E(pk,m), 0^128) and D'(sk, (c1,c2)) = D(sk,c1)
+Phase 1:
+    Attacker sends nothing.
+Challenge:
+    Attacker picks any distinct m0, m1 with E(pk,m0) = c0 and E(pk,m1)=c1.
+    Attacker sends (m0,m1) to receive (cb, 0^128)
+Phase 2:
+    Attacker sends (cb, 1^128) to receive D(sk, cb) from which he determines b
+    with advantage 1.
+So the system is not CCA secure.
+
+>E' = (E(pk,m), E(pk,m)) and D'(sk, (c1,c2)) = c1 == c2 ? D(k2, c1) : bottom
+Suppose there is a CCA on this system. We can then attack (G,E,D) with the
+following transformations:
+Phase 1:
+    ci -> (ci,ci)
+    mi -> (mi,mi)
+Challenge:
+    (m0,m1) -> ((m0,m0),(m1,m1))
+    E(pk,mb) -> (c,c) := (E(pk,mb), E(pk,mb))
+Phase 2:
+    ci -> (ci,ci)
+    mi -> (mi,mi)
+    Since ci != c, (ci,ci) != (c,c) 
+We then output b' directly to win the CCA game.
+So the system is CCA secure.
+
+>E' = E(pk, m + 1^128) and D' = D(sk,c) + 1^128
+Suppose there is a CCA on this system. We can then attack (G,E,D) with the
+following transformations:
+Phases 1 and 2:
+    ci -> ci
+    mi -> ~mi
+Challenge:
+    (m0,m1) -> (~m0,~m1)
+    E(pk,~mb) -> c (unchanged)
+We then output b' directly to win the CCA game.
+So the system is CCA secure.
+
+>E' = (E(pk,m),E(pk,m)) and D'(sk, (c1,c2))=D(k2,c1)
+Phase 1:
+    Attacker sends nothing.
+Challenge:
+    Attacker picks any distinct m0, m1 with E(pk,m0) = c0 and E(pk,m1) = c1.
+    Attacker sends (m0,m1) to receive (cb, cb)
+Phase 2:
+    Attacker sends (cb, ~cb) to receive D(sk, cb) == mb from which he determines
+    b with advantage 1.
+So the system is not CCA secure.
 
 --------------------------------------------------------------------------------
 4.
 
+Alice aims to find an integer multiple of phi(N).  She knows that
+3*da mod phi(N) = 1
+3*da = k*phi(N) + 1
+3*da - 1 = k*phi(N)
+
+So (3*da - 1) is an integer multiple of phi(N).
 
 --------------------------------------------------------------------------------
 5.
