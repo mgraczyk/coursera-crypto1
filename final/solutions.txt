@@ -36,11 +36,16 @@ Since i was arbitrary, the result Z= X ^ Y is a uniform distribution over
 {0,1}^n
 
 So 0^n occurs with probability 1/2^n
-
-
+_33
 --------------------------------------------------------------------------------
 3.
 
+Not sure why the question mentions both (E1,D1) and (E2,D2)...
+
+Since (E1,D1) is deterministic, it cannot offer many time semantic security.
+However, it can offer one time semantic security.  I assume "perfect security"
+means authenticated encryption (no MiTM attacks).  The system could have
+perfect security in that case.
 
 --------------------------------------------------------------------------------
 4.
