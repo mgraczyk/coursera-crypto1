@@ -1,10 +1,41 @@
 --------------------------------------------------------------------------------
 1.
 
+Error correcting codes are designed to be tolerant against random changes
+during transmission.  If the ECC encoding is permuted randomly by an
+encryption function, it won't work correctly.
 
+Even more importantly, decryption needs an error free input to work
+effectively.  If a system tries to decrypt an erroneous ciphertext, the
+resulting pre-ECC plaintext will be meaningless.
+
+Therefore you should encrypt and then apply the ECC.
 
 --------------------------------------------------------------------------------
 2.
+
+For any bit X[i], we have 
+
+P(X[i] == 0) = p = 1/2
+
+so
+
+P(X[i] xor Y[i] == 0)
+= P(X[i] == 0 and Y[i] == 0 or X[i] == 1 and Y[i] == 1)
+= P(X[i] == 0 and Y[i] == 0) + P(X[i] == 1 and Y[i] == 1)
+= p*P(Y[i]==0) + (1-p)*P(Y[i]==1)
+
+Letting q(i, ...) = q = P(Y[i]==0)
+= pq + (1-p)*(1-q)
+= pq + 1 - q - p + qp
+= 1 + q - q - 1/2
+= 1/2
+
+
+Since i was arbitrary, the result Z= X ^ Y is a uniform distribution over
+{0,1}^n
+
+So 0^n occurs with probability 1/2^n
 
 
 --------------------------------------------------------------------------------
