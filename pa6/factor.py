@@ -41,7 +41,6 @@ def ch3_factor(N):
     """ Valid when |3p - 2q| < N^(1/4)
     """
 
-    # TODO: Minus 1?
     A = ceil_sqrt(6*N)
 
     # let M = (3p+2q)/2
@@ -72,6 +71,7 @@ def ch3_factor(N):
             if f:
                 return f
 
+    # We should have found the root
     assert(False)
 
 def factor(N):
