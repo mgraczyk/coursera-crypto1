@@ -49,14 +49,17 @@ smaller than the message space, the cipher cannot be perfectly secure.
 --------------------------------------------------------------------------------
 4.
 
-CBC mode requires the the block cipher be reversible, so it must be a PRP.  On
+CBC mode requires the block cipher be reversible, so it must be a PRP.  On
 the other hand, CTR mode can be configured to only use the encryption directly
 of the block cipher, so it will work with just a PRF.
 
 --------------------------------------------------------------------------------
 5.
 
-
+The function G(k)[m] with m in {0,1} is a secure PRF whenever G is a secure
+PRG.  The other options are insecure because they are clearly distinguishable
+from random (change a single bit in the m and see what happens to the
+output.)
 
 
 --------------------------------------------------------------------------------
@@ -77,18 +80,67 @@ that are expected to be sent, or just 2^32 nonces.
 --------------------------------------------------------------------------------
 8.
 
-
+That a MAC is secure implies that an attacker cannot create any forgery. This
+implies the weaker version of security that says an attacker cannot forge the
+message S(k,m1) given m0, m1, and S(k,m0).
 
 --------------------------------------------------------------------------------
 9.
 
+Collision Resistance implies that it is difficult to find any
+
+m0, m1 such that H(m0) = H(m1)
 
 --------------------------------------------------------------------------------
 10.
 
+Authenticated Encryption implies many weaker security definitions.  For
+instance, it implies:
+
+> Given m and E(k,m) it is difficult to find k (weak semantic security)
+
+> (E,D) provides chosen-ciphertext security.
+
+AE does not imply
+> Given c=E(k,m) for some k,m, the attacker cannot find k',m' such that
+> c=E(k',m').  That would imply some notion of "collision resistance" between
+> messages encrypted with different keys. 
+
+> Given k,m and E(k,m) the attacker cannot create a valid encryption of m+1
+  under key k. (AE does not imply anything if the attacker gets k)
 
 --------------------------------------------------------------------------------
 11.
 
+The following are true of DH key exchange:
+> The basic protocol enables key exchange secure against eavesdropping, but is
+> insecure against active adversaries that can inject and modify messages.
+
+> The protocol provides security against eavesdropping in any finite group in
+> which the Hash Diffie-Hellman (HDH) assumption holds.
+
+The following are not true of DH:
+> The protocol is based on the concept of a trapdoor function.  (Even though
+> the protocol relies on a one-way function, there is no trapdoor to the
+> discrete log problem.)
+
+> As with RSA, the protocol only provides eavesdropping security in the group
+> Z*N where N is an RSA modulus. (RSA provides eavesdropping security in other
+> groups such as the elliptic curve groups, as does DH.)
+
+--------------------------------------------------------------------------------
+12.
+
+Each party Ai has access to the values ai and of course Xi = g^ai and Yi =
+Xi^b = g^bai.  Ai can therefore compute g^b as
+(g^bai) ^ 1/ai = Xi^b ^ 1/ai = Yi^(1/ai)
+
+--------------------------------------------------------------------------------
+13.
+
+For any prime p, totient(p) = p-1, so d is the inverse of e in the group
+Z*_{p-1}, or
+
+d <- e^-1 (mod p-1)
 
 --------------------------------------------------------------------------------
