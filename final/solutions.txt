@@ -40,11 +40,12 @@ So 0^n occurs with probability 1/2^n
 --------------------------------------------------------------------------------
 3.
 
-Not sure why the question mentions both (E1,D1) and (E2,D2)...
-
 Since (E1,D1) is deterministic, it cannot offer many time semantic security.
 However, it can offer one time semantic security. Since the key space is
 smaller than the message space, the cipher cannot be perfectly secure.
+
+On the other hand, (E2,D2) can be both one time semantically secure and
+perfectly secure since the key space and message space are the same size.
 
 --------------------------------------------------------------------------------
 4.
